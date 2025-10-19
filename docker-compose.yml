@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./integracaoBackend
+      dockerfile: Dockerfile
+    container_name: integracao-backend
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - nuvende-network
+
+  frontend:
+    build:
+      context: ./integracaoFrontend
+      dockerfile: Dockerfile
+    container_name: integracao-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - nuvende-network
+    environment:
+      - VITE_API_URL=http://backend:8080
+
+networks:
+  nuvende-network:
+    driver: bridge
